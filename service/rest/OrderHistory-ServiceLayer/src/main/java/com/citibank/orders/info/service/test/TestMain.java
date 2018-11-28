@@ -1,4 +1,5 @@
 package com.citibank.orders.info.service.test;
+import com.citibank.orders.info.service.OrderHistoryService;
 import com.citibank.orders.info.service.beans.CardDetails;
 import com.citibank.orders.info.service.beans.ClientContext;
 import com.citibank.orders.info.service.beans.DateRange;
@@ -11,7 +12,7 @@ import com.citibank.orders.info.service.impl.OrderHistoryServiceImpl;
 public class TestMain {
 
 	public static void main(String[] args) {
-		OrderHistoryServiceImpl svcImpl = new OrderHistoryServiceImpl();
+		OrderHistoryService svcImpl = new OrderHistoryServiceImpl();
 		OrderHistoryServiceReqBean svcReq = new OrderHistoryServiceReqBean();
 		OrderHistoryServiceResBean svcRes = new OrderHistoryServiceResBean();
 		
@@ -24,7 +25,7 @@ public class TestMain {
 		cardDetails.setCardNumber("45673839038373");
 		cardDetails.setCvvNum("36");
 		cardDetails.setExpDate("12102018");
-		cardDetails.setNameOnCard("nishant");
+		cardDetails.setNameOnCard("XYZ");
 		
 		DateRange dateRange = new DateRange();
 		dateRange.setStartDate("12102018");
