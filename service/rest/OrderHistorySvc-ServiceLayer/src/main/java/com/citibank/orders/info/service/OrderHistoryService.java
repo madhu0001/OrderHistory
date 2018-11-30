@@ -7,4 +7,3 @@ public interface OrderHistoryService {
 	OrderHistoryServiceResBean getOrderHistory(OrderHistoryServiceReqBean serviceReq);
 
 }
-

@@ -15,10 +15,12 @@ public class OrderHistoryDetails {
 
 	@Override
 	public String toString() {
-		return "OrderHistoryDetails [orderHistory=" + orderHistory + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("OrderHistoryDetails [orderHistory=");
+		builder.append(orderHistory);
+		builder.append("]");
+		return builder.toString();
 	}
-	
-
 
 	
 }

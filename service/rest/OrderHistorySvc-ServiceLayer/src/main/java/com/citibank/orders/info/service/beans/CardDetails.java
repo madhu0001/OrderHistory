@@ -32,9 +32,19 @@ public class CardDetails {
 	}
 	@Override
 	public String toString() {
-		return "CardDetails [cardNumber=" + cardNumber + ", cvvNum=" + cvvNum + ", expDate=" + expDate + ", nameOnCard="
-				+ nameOnCard + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("CardDetails [cardNumber=");
+		builder.append(cardNumber);
+		builder.append(", cvvNum=");
+		builder.append(cvvNum);
+		builder.append(", expDate=");
+		builder.append(expDate);
+		builder.append(", nameOnCard=");
+		builder.append(nameOnCard);
+		builder.append("]");
+		return builder.toString();
 	}
+	
 	
 	
 

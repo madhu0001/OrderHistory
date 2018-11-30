@@ -12,13 +12,13 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.RestTemplate;
 
 import com.citibank.ohs.service.client.OrderHistoryServiceClient;
-import com.citibank.ohs.service.client.beans.OrderHistoryWebSevReq;
-import com.citibank.ohs.service.client.beans.OrderHistoryWebSevRes;
+import com.citibank.ohs.service.client.beans.OrderHistoryWebSvcReq;
+import com.citibank.ohs.service.client.beans.OrderHistoryWebSvcRes;
 
 public class OrderHistoryServiceClientImpl implements OrderHistoryServiceClient {
 
 	@Override
-	public OrderHistoryWebSevRes getOrderHistory(OrderHistoryWebSevReq svcReq) {
+	public OrderHistoryWebSvcRes getOrderHistory(OrderHistoryWebSvcReq svcReq) {
 
 		String uri = "http://localhost:2525/OrderHistorySvc-war/rest/orderHistory/v1/orders";
 
@@ -41,9 +41,9 @@ public class OrderHistoryServiceClientImpl implements OrderHistoryServiceClient 
 
 		// create HttpEntity obj
 
-		HttpEntity<OrderHistoryWebSevReq> request = new HttpEntity<OrderHistoryWebSevReq>(svcReq, headers);
+		HttpEntity<OrderHistoryWebSvcReq> request = new HttpEntity<OrderHistoryWebSvcReq>(svcReq, headers);
 
-		OrderHistoryWebSevRes response = template.postForObject(uri, request, OrderHistoryWebSevRes.class);
+		OrderHistoryWebSvcRes response = template.postForObject(uri, request, OrderHistoryWebSvcRes.class);
 		System.out.println("Response is " + response);
 		return response;
 	}
