@@ -2,6 +2,13 @@ package com.citibank.orders.info.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 import com.citibank.orders.info.process.OrderHistoryProcess;
 import com.citibank.orders.info.process.beans.OrderDetailsProcessBean;
@@ -9,62 +16,76 @@ import com.citibank.orders.info.process.beans.OrderHistoryProcessReqBean;
 import com.citibank.orders.info.process.beans.OrderHistoryProcessResBean;
 import com.citibank.orders.info.process.impl.OrderHistoryProcessImpl;
 import com.citibank.orders.info.service.OrderHistoryService;
+import com.citibank.orders.info.service.beans.ClientContext;
 import com.citibank.orders.info.service.beans.OrderHistory;
 import com.citibank.orders.info.service.beans.OrderHistoryDetails;
 import com.citibank.orders.info.service.beans.OrderHistoryServiceReqBean;
 import com.citibank.orders.info.service.beans.OrderHistoryServiceResBean;
 import com.citibank.orders.info.service.beans.StatusBlock;
+import com.citibank.orders.info.service.builder.OrderHistoryServiceReqBuilder;
+import com.citibank.orders.info.service.builder.OrderHistoryServiceResBuilder;
+import com.citibank.orders.info.service.exception.OrderHistorySvcInvalidException;
+import com.citibank.orders.info.service.validator.OrderHistoryServiceValidator;
 
+@Path("/orderhistory")
 public class OrderHistoryServiceImpl implements OrderHistoryService {
 
-	public OrderHistoryServiceResBean getOrderHistory(OrderHistoryServiceReqBean serviceReq) {
+	@Path("/v1/orders")
+	@POST
+	@Consumes("application/json")
+	@Produces("application/json")
+	public OrderHistoryServiceResBean getOrderHistory(OrderHistoryServiceReqBean serviceReq,
+			@HeaderParam("client_id") String client_id, @HeaderParam("channel_id") String channel_id,
+			@HeaderParam("req_id") String req_id) throws InterruptedException, ExecutionException, OrderHistorySvcInvalidException {
 
-		// 1. get the request from consumer
+		System.out.println("enter into svclayer " + serviceReq);
+		System.out.println("Client id " + client_id);
+		System.out.println("Channel id " + channel_id);
+		System.out.println("Req id " + req_id);
 
-		// 2. validate the request
+		ClientContext clientContext = new ClientContext();
+		clientContext.setClientId(client_id);
+		clientContext.setChannelId(channel_id);
+		clientContext.setRequestId(req_id);
+		serviceReq.setClientContext(clientContext);
+		System.out.println(serviceReq.getClientContext().getChannelId());
+		
+		OrderHistoryServiceResBean serviceResp=null;
+		OrderHistoryProcessResBean processResp=null;
 
-		// 3. prepare the process request
+			try {
+				// 1. get the request from consumer
+				// 2. validate the request
+				OrderHistoryServiceValidator validator =new OrderHistoryServiceValidator();
+				validator.validateRequest(serviceReq);
+				// 3. prepare the process request
+				OrderHistoryServiceReqBuilder reqBuilder=new OrderHistoryServiceReqBuilder();
+				
+				OrderHistoryProcessReqBean processReq=reqBuilder.buildProcessReq(serviceReq);
+				// 4. create the process object
+				OrderHistoryProcess process = new OrderHistoryProcessImpl();
+				// 5. call the processorder method and get the response
+				processResp = process.getOrderHistory(processReq);
 
-		// 4. create the process object
+				OrderHistoryServiceResBuilder respBuilder =new OrderHistoryServiceResBuilder();
+				serviceResp=respBuilder.buildServiceResponse(processResp);
+			} catch (OrderHistorySvcInvalidException e) {
 
-		// 5. call the processorder method and get the response
+				serviceResp=new OrderHistoryServiceResBean();
+				StatusBlock statusBlock=new StatusBlock();
+				statusBlock.setRespCode(e.getResCode());
+				statusBlock.setRespMessage(e.getResMsg());
+				serviceResp.setStatusBlock(statusBlock);
+				e.printStackTrace();
+			}catch (Exception e) {
 
-		OrderHistoryProcessReqBean processReq = new OrderHistoryProcessReqBean();
-		OrderHistoryProcess process = new OrderHistoryProcessImpl();
-
-		OrderHistoryProcessResBean processResp = process.getOrderHistory(processReq);
-
-		// 6. prepare the service layer response
-
-		OrderHistoryServiceResBean serviceResp = new OrderHistoryServiceResBean();
-
-		StatusBlock statusBlock = new StatusBlock();
-		statusBlock.setRespCode(processResp.getRespCode());
-		statusBlock.setRespMessage(processResp.getRespMesssage());
-
-		OrderHistoryDetails orderDetails = new OrderHistoryDetails();
-		List<OrderHistory> orderHistoryList = new ArrayList<OrderHistory>();
-
-		List<OrderDetailsProcessBean> processOrderList = processResp.getOrderDetailsProcessBean();
-		for (OrderDetailsProcessBean orderDetailsProcessBean : processOrderList) {
-
-			OrderHistory orderHistory = new OrderHistory();
-			orderHistory.setOid(orderDetailsProcessBean.getOid());
-			orderHistory.setName(orderDetailsProcessBean.getName());
-			orderHistory.setDesc(orderDetailsProcessBean.getDesc());
-			orderHistory.setDate(orderDetailsProcessBean.getDate());
-			orderHistory.setPrice(orderDetailsProcessBean.getPrice());
-			orderHistory.setStatus(orderDetailsProcessBean.getStatus());
-			orderHistory.setType(orderDetailsProcessBean.getType());
-			orderHistoryList.add(orderHistory);
-
-		}
-		orderDetails.setOrderHistory(orderHistoryList);
-
-		// 7. set the serviceResp using processResp
-
-		serviceResp.setStatusBlock(statusBlock);
-		serviceResp.setOrderHistoryDetails(orderDetails);
+				serviceResp=new OrderHistoryServiceResBean();
+				StatusBlock statusBlock=new StatusBlock();
+				statusBlock.setRespCode("8888");
+				statusBlock.setRespMessage("Unknown Error");
+				serviceResp.setStatusBlock(statusBlock);
+				e.printStackTrace();
+			}	
 
 		return serviceResp;
 	}

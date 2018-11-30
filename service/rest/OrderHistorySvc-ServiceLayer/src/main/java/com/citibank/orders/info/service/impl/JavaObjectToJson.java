@@ -1,4 +1,4 @@
-package com.citibank.orders.info.service.test;
+package com.citibank.orders.info.service.impl;
 
 import java.util.concurrent.ExecutionException;
 
@@ -10,15 +10,18 @@ import com.citibank.orders.info.service.beans.OrderHistoryServiceReqBean;
 import com.citibank.orders.info.service.beans.OrderHistoryServiceResBean;
 import com.citibank.orders.info.service.beans.OrdersInfo;
 import com.citibank.orders.info.service.beans.ServiceDetails;
-import com.citibank.orders.info.service.exception.OrderHistorySvcInvalidException;
-import com.citibank.orders.info.service.impl.OrderHistoryServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class TestMain {
+public class JavaObjectToJson {
 
-	public static void main(String[] args) throws InterruptedException, ExecutionException, OrderHistorySvcInvalidException {
+	public static void main(String[] args) throws InterruptedException, ExecutionException, JsonProcessingException {
+
+		ObjectMapper mapper = new ObjectMapper();
+
 		OrderHistoryService svcImpl = new OrderHistoryServiceImpl();
 		OrderHistoryServiceReqBean svcReq = new OrderHistoryServiceReqBean();
-		OrderHistoryServiceResBean svcRes = new OrderHistoryServiceResBean();
+		//OrderHistoryServiceResBean svcRes = new OrderHistoryServiceResBean();
 
 		ClientContext clientContext = new ClientContext();
 		clientContext.setClientId("WEB");
@@ -50,9 +53,8 @@ public class TestMain {
 		svcReq.setOrdersInfo(ordersInfo);
 		svcReq.setServiceDetails(svcDetails);
 
-		svcRes = svcImpl.getOrderHistory(svcReq, null, null, null);
-		System.out.println(svcRes.toString());
-
+		String json=mapper.writerWithDefaultPrettyPrinter().writeValueAsString(svcReq);
+		System.out.println("Json Response Is "+json);
 	}
 
 }

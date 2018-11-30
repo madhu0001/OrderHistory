@@ -11,7 +11,7 @@ public class OrderHistoryProcessReqBean {
 	private String startDate;
 	private String endDate;
 	private String typeOfOrder;
-	private String price;
+	private Double price;
 	public String getClientId() {
 		return clientId;
 	}
@@ -66,19 +66,37 @@ public class OrderHistoryProcessReqBean {
 	public void setTypeOfOrder(String typeOfOrder) {
 		this.typeOfOrder = typeOfOrder;
 	}
-	public String getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(String price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 	@Override
 	public String toString() {
-		return "OrderHistoryProcessReqBean [clientId=" + clientId + ", channelId=" + channelId + ", cardNum=" + cardNum
-				+ ", cvvNum=" + cvvNum + ", expDate=" + expDate + ", nameOnCard=" + nameOnCard + ", startDate="
-				+ startDate + ", endDate=" + endDate + ", typeOfOrder=" + typeOfOrder + ", price=" + price + "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("OrderHistoryProcessReqBean [clientId=");
+		builder.append(clientId);
+		builder.append(", channelId=");
+		builder.append(channelId);
+		builder.append(", cardNum=");
+		builder.append(cardNum);
+		builder.append(", cvvNum=");
+		builder.append(cvvNum);
+		builder.append(", expDate=");
+		builder.append(expDate);
+		builder.append(", nameOnCard=");
+		builder.append(nameOnCard);
+		builder.append(", startDate=");
+		builder.append(startDate);
+		builder.append(", endDate=");
+		builder.append(endDate);
+		builder.append(", typeOfOrder=");
+		builder.append(typeOfOrder);
+		builder.append(", price=");
+		builder.append(price);
+		builder.append("]");
+		return builder.toString();
 	}
 	
-	
-
 }

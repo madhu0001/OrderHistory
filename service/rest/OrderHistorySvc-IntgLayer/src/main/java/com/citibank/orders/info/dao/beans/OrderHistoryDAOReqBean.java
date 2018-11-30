@@ -1,7 +1,7 @@
 package com.citibank.orders.info.dao.beans;
 
 public class OrderHistoryDAOReqBean {
-	
+
 	private String cardNumber;
 	private String clientId;
 	private String channelId;
@@ -11,6 +11,7 @@ public class OrderHistoryDAOReqBean {
 	private String startDate;
 	private String endDate;
 	private String typeOfOrder;
+	private Double price;
 	public String getCardNumber() {
 		return cardNumber;
 	}
@@ -65,6 +66,12 @@ public class OrderHistoryDAOReqBean {
 	public void setTypeOfOrder(String typeOfOrder) {
 		this.typeOfOrder = typeOfOrder;
 	}
+	public Double getPrice() {
+		return price;
+	}
+	public void setPrice(Double price) {
+		this.price = price;
+	}
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -86,7 +93,11 @@ public class OrderHistoryDAOReqBean {
 		builder.append(endDate);
 		builder.append(", typeOfOrder=");
 		builder.append(typeOfOrder);
+		builder.append(", price=");
+		builder.append(price);
 		builder.append("]");
 		return builder.toString();
 	}
+
+	
 }

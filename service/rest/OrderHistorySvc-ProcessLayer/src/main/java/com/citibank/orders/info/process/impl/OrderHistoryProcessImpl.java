@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -22,38 +23,40 @@ import com.citibank.orders.info.process.tasks.DAOTask;
 
 public class OrderHistoryProcessImpl implements OrderHistoryProcess {
 
-	public OrderHistoryProcessResBean getOrderHistory(OrderHistoryProcessReqBean processReq) {
+	public OrderHistoryProcessResBean getOrderHistory(OrderHistoryProcessReqBean processReq) throws InterruptedException, ExecutionException {
+		
+		System.out.println("entered into process layer "+processReq);
+		OrderHistoryProcessResBean processResBean = new OrderHistoryProcessResBean();
 		// 1. get the request from the service layer
-
-		// 2. prepare the request to 1st Intg layer ie CardDAO and get the reponse by
-		// calling the method
+		// 2. prepare the request to 1st Intg layer ie CardDAO and get the reponse by calling the method
 		System.out.println(this.getClass().getSimpleName());
 
-		OrderHistoryProcessResBean processResBean = new OrderHistoryProcessResBean();
-
 		CardDetailsDAO cardDAO = new CardDetailsDAOImpl();
-		CardResponse cardRespponse = new CardResponse();
-		cardRespponse = cardDAO.getAllCards(processReq.getCardNum());
+		
+		//call getAllCardsdao
+		CardResponse cardRespponse = cardDAO.getAllCards(processReq.getCardNum());
 		System.out.println("cardresponse" + cardRespponse);
 
 		// 3. checking if the cardResponse is valid or not
-
+		// 4 apply paralell call to invoke the orderhistorydao
 		try {
 			if (cardRespponse.getCardList() != null && !cardRespponse.getCardList().isEmpty()) {
 
+				Set setOfTask = new HashSet();
 				List<String> cardList = cardRespponse.getCardList();
 
 				// setting DAOReqBean
-
-				Set setOfTask = new HashSet();
 				for (int i = 0; i < cardList.size(); i++) {
 					OrderHistoryDAOReqBean daoReq = new OrderHistoryDAOReqBean();
-					daoReq.setCardNumber(cardRespponse.getCardList().get(i));
-					daoReq.setChannelId("web");
-					daoReq.setClientId("23456");
-					daoReq.setStartDate("10122018");
-					daoReq.setEndDate("31122018");
-					daoReq.setTypeOfOrder("electronics");
+					daoReq.setCardNumber(cardRespponse.getCardList().get(i)); //get from cardsResp
+					daoReq.setChannelId(processReq.getChannelId());
+					daoReq.setClientId(processReq.getClientId());
+					daoReq.setStartDate(processReq.getStartDate());
+					daoReq.setEndDate(processReq.getEndDate());
+					daoReq.setTypeOfOrder(processReq.getTypeOfOrder());
+					daoReq.setNameOnCard(processReq.getNameOnCard());
+					daoReq.setPrice(processReq.getPrice());
+					
 					setOfTask.add(new DAOTask(daoReq));
 				}
 
@@ -65,6 +68,7 @@ public class OrderHistoryProcessImpl implements OrderHistoryProcess {
 				// getting DAO response and combining all result
 
 				OrderHistoryDAOResBean daoRes = null;
+				//get the list of orderhistory from DAOResp and prepare the process response
 				List<OrderDetailsProcessBean> orderDetailsProcessBeanList = new ArrayList<OrderDetailsProcessBean>();
 
 				for (Future<OrderHistoryDAOResBean> future : ftlist) {
@@ -75,7 +79,7 @@ public class OrderHistoryProcessImpl implements OrderHistoryProcess {
 
 					for (OrderDetailsDAO ordersDAO : orderDetailsDAOBeanList) {
 
-						System.out.println(ordersDAO.getOid());
+						System.out.println("OrderDetailsDAO "+ordersDAO.getOid());
 
 						OrderDetailsProcessBean orderDetailsProcessBean = new OrderDetailsProcessBean();
 						orderDetailsProcessBean.setOid(ordersDAO.getOid());
@@ -89,8 +93,8 @@ public class OrderHistoryProcessImpl implements OrderHistoryProcess {
 
 					}
 
-					processResBean.setRespCode("0");
-					processResBean.setRespMesssage("success");
+					processResBean.setRespCode(daoRes.getRespCode());
+					processResBean.setRespMesssage(daoRes.getRespMesssage());
 					processResBean.setOrderDetailsProcessBean(orderDetailsProcessBeanList);
 				}
 
