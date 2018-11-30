@@ -16,7 +16,7 @@ public class TestProperties {
 		String file="/properties/orderhistory_"+env+"_db.properties";
 		Properties p=new Properties();
 		InputStream is=TestProperties.class.getClassLoader().getResourceAsStream(file);
-		//InputStream is=new FileInputStream("D:/Java Package/Project/OrderHistorySvc-IntgLayer/src/main/resources/orderhistory_dev_db.properties");
+		//InputStream is=new FileInputStream("D:\Java Package\Project\OrdersHistory-BonusRewards\service\rest\OrderHistorySvc-IntgLayer\src\main\resources\orderhistory_dev_db.properties");
 		p.load(is);
 		
 		String dburl=p.getProperty("db_url");
