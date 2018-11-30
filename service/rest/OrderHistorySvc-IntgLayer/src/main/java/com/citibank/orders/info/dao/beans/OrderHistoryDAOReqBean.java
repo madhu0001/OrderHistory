@@ -5,6 +5,9 @@ public class OrderHistoryDAOReqBean {
 	private String cardNumber;
 	private String clientId;
 	private String channelId;
+	private String cvvNum;
+	private String expDate;
+	private String nameOnCard;
 	private String startDate;
 	private String endDate;
 	private String typeOfOrder;
@@ -26,6 +29,24 @@ public class OrderHistoryDAOReqBean {
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}
+	public String getCvvNum() {
+		return cvvNum;
+	}
+	public void setCvvNum(String cvvNum) {
+		this.cvvNum = cvvNum;
+	}
+	public String getExpDate() {
+		return expDate;
+	}
+	public void setExpDate(String expDate) {
+		this.expDate = expDate;
+	}
+	public String getNameOnCard() {
+		return nameOnCard;
+	}
+	public void setNameOnCard(String nameOnCard) {
+		this.nameOnCard = nameOnCard;
+	}
 	public String getStartDate() {
 		return startDate;
 	}
@@ -46,12 +67,26 @@ public class OrderHistoryDAOReqBean {
 	}
 	@Override
 	public String toString() {
-		return "OrderHistoryDAOReqBean [cardNumber=" + cardNumber + ", clientId=" + clientId + ", channelId="
-				+ channelId + ", startDate=" + startDate + ", endDate=" + endDate + ", typeOfOrder=" + typeOfOrder
-				+ "]";
+		StringBuilder builder = new StringBuilder();
+		builder.append("OrderHistoryDAOReqBean [cardNumber=");
+		builder.append(cardNumber);
+		builder.append(", clientId=");
+		builder.append(clientId);
+		builder.append(", channelId=");
+		builder.append(channelId);
+		builder.append(", cvvNum=");
+		builder.append(cvvNum);
+		builder.append(", expDate=");
+		builder.append(expDate);
+		builder.append(", nameOnCard=");
+		builder.append(nameOnCard);
+		builder.append(", startDate=");
+		builder.append(startDate);
+		builder.append(", endDate=");
+		builder.append(endDate);
+		builder.append(", typeOfOrder=");
+		builder.append(typeOfOrder);
+		builder.append("]");
+		return builder.toString();
 	}
-	
-	
-	
-
 }
